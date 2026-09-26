@@ -1,0 +1,33 @@
+name: Build Renjana APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Give Gradle permission
+        run: chmod +x gradlew
+
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug
+
+      - name: Show generated APKs
+        run: find app/build/outputs/apk -type f -name "*.apk" -print
+
+      - name: Upload APKs
+        uses: actions/upload-artifact@v4
+        with:
+          name: Renjana-APKs
+          path: app/build/outputs/apk/**/*.apk
